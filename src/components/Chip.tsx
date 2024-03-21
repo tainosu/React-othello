@@ -1,5 +1,5 @@
 interface ChipsProps {
-    status: 'white' | 'brack';
+    status: 'white' | 'black';
 }
 
 function Chips({ status }: ChipsProps) {
