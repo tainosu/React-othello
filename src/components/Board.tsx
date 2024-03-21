@@ -1,8 +1,11 @@
+import { useState } from "react";
+
 import { Card } from "@mui/material";
 import Chip from './Chip';
 
 function Board() {
-    const board = [
+    // 初期状態
+    const defaultBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
@@ -12,6 +15,21 @@ function Board() {
         [0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
     ];
+    // 先行の色
+    const preceding = 'white';
+    // 盤の状態管理
+    const [board, setBoard] = useState(defaultBoard);
+    // ターンの管理
+    const [turn, setTurn] = useState(preceding);
+
+    // 盤クリック時のイベント
+    const clickBoard = (rowIndex: number, colIndex: number) => {
+        const newBoard = [...board];
+        newBoard[rowIndex][colIndex] = turn === 'white' ? 1 : 2;
+        setBoard(newBoard);
+        setTurn(turn === 'white' ? 'black' : 'white');
+    };
+
     return (
         // オセロの盤
         <Card square className="max-w-md">
@@ -25,7 +43,12 @@ function Board() {
                             className="border border-[#000] bg-[#516a39] aspect-[4/4] p-1"
                         >
                             {/* ０：何も置かれていない */}
-                            {col === 0 && <></>}
+                            {col === 0 && (
+                                <div
+                                    className="w-full h-full"
+                                    onClick={() => clickBoard(rowIndex, colIndex)}
+                                ></div>
+                            )}
                             {/* １：白が置かれている */}
                             {col === 1 && <Chip status='white'></Chip>}
                             {/* ２：黒が置かれている */}
