@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { Card } from "@mui/material";
 import { Button } from "@mui/material";
@@ -35,8 +35,58 @@ function Board() {
     const [board, setBoard] = useState(defaultBoard);
     // ターンの管理
     const [turn, setTurn] = useState(preceding);
+    // 各コマの管理
     const [whiteNum, setWhiteNum] = useState(2);
     const [blackNum, setBlackNum] = useState(2);
+
+
+    useEffect(() => {
+        if(checkGameover()) {
+            endGame();
+        }
+    }, [board]);
+
+    // 終了判定
+    const checkGameover = () => {
+        for (let i = 0; i < 8; i++) {
+            for (let j = 0; j < 8; j++) {
+                if (board[i][j] === 0) {
+                    return false; // 空きマスがある場合はゲームは終了していない
+                }
+            }
+        }
+        if(getAvailableMoves().length === 0){
+            return true;
+        }
+        return false;
+    }
+
+    // 合法手を持つかどうかを確認する関数
+    const getAvailableMoves = () => {
+        const availableMoves = [];
+        // 全ての空きマスに対して合法手を持つか確認
+        for (let i = 0; i < 8; i++) {
+            for (let j = 0; j < 8; j++) {
+                if (board[i][j] === 0 && getReversePoints(i, j).length > 0) {
+                    availableMoves.push([i, j]);
+                }
+            }
+        }
+        console.log(availableMoves);
+        return availableMoves;
+    };
+
+    // ゲーム終了時の処理
+    const endGame = () => {
+        console.log("ゲーム終了");
+        if(whiteNum > blackNum){
+            alert("白の勝ち");
+        } else if(whiteNum < blackNum){
+            alert("黒の勝ち");
+        } else {
+            alert("引き分け");
+        }
+    };
 
     // ひっくり返すことができる座標を取得
     const getReversePoints = (currentX: number, currentY: number) => {
@@ -46,44 +96,45 @@ function Board() {
         const currentTurn = turn === "white" ? 1 : 2;
         // ８方面を確認する
         direction.forEach((d) => {
-        //確認する方向の座標
-        const axisX = d[0];
-        const axisY = d[1];
-        let x = axisX + currentX;
-        let y = axisY + currentY;
-        if (y < 0 || y >= 8) return;
-        if (x < 0 || x >= 8) return;
-        // 確認する方向の隣のコマの数値
-        const pointStatus = board[y][x];
-        // コマがなかった場合次の方向を確認しに行く
-        if (!pointStatus) return;
-        // 確認する方向の隣のコマの数値が同じであった場合次の方向を確認しに行く
-        if (pointStatus === currentTurn) return;
-        // 変更するかもしれない座標
-        let localChangePoint = [[axisX + currentX, axisY + currentY]];
-        let isStatus = true;
-        while (isStatus) {
-            // 確認する方向を順に確認しています。
-            x = x + axisX;
-            y = y + axisY;
+            //確認する方向の座標
+            const axisX = d[0];
+            const axisY = d[1];
+            let x = axisX + currentX;
+            let y = axisY + currentY;
             if (y < 0 || y >= 8) return;
             if (x < 0 || x >= 8) return;
+            // 確認する方向の隣のコマの数値
             const pointStatus = board[y][x];
-            // コマがなかった場合、localChangePointを空にして次の方向確認
-            if (!pointStatus) {
-            localChangePoint = [];
-            isStatus = false;
+            // コマがなかった場合次の方向を確認しに行く
+            if (!pointStatus) return;
+            // 確認する方向の隣のコマの数値が同じであった場合次の方向を確認しに行く
+            if (pointStatus === currentTurn) return;
+            // 変更するかもしれない座標
+            let localChangePoint = [[axisX + currentX, axisY + currentY]];
+            let isStatus = true;
+            while (isStatus) {
+                // 確認する方向を順に確認しています。
+                x = x + axisX;
+                y = y + axisY;
+                if (y < 0 || y >= 8) return;
+                if (x < 0 || x >= 8) return;
+                const pointStatus = board[y][x];
+                // コマがなかった場合、localChangePointを空にして次の方向確認
+                if (!pointStatus) {
+                    localChangePoint = [];
+                    isStatus = false;
+                }
+                // 同じ色のコマがあった場合処理を抜ける
+                else if (pointStatus === currentTurn) {
+                    isStatus = false;
+                }
+                // 違う色のコマだった場合、localChangePointに座標を入れる
+                else {
+                    localChangePoint.push([x, y]);
+                }
             }
-            // 同じ色のコマがあった場合処理を抜ける
-            else if (pointStatus === currentTurn) {
-            isStatus = false;
-            }
-            // 違う色のコマだった場合、localChangePointに座標を入れる
-            else {
-            localChangePoint.push([x, y]);
-            }
-        }
-        result.push(...localChangePoint);
+            result.push(...localChangePoint);
+            console.log(result);
         });
         return result;
     };
@@ -109,7 +160,7 @@ function Board() {
 
     // 盤クリック時のイベント
     const clickBoard = (rowIndex: number, colIndex: number) => {
-        const newBoard = [...board];
+        let newBoard = [...board];
         const reversePoints = getReversePoints(colIndex, rowIndex);
         // 置けないマスをクリックしたら抜ける
         if (reversePoints.length === 0) return 0;
@@ -122,12 +173,11 @@ function Board() {
         });
         // 盤の状態を更新
         setBoard(newBoard);
+        // ターンを更新
+        setTurn(turn === 'white' ? 'black' : 'white');
         const chipsNum: [number, number] = countChips(board);
         setWhiteNum(chipsNum[0]);
         setBlackNum(chipsNum[1]);
-
-        // ターンを更新
-        setTurn(turn === 'white' ? 'black' : 'white');
     };
 
     // パス機能
@@ -160,6 +210,12 @@ function Board() {
                                 {col === 1 && <Chip status='white'></Chip>}
                                 {/* ２：黒が置かれている */}
                                 {col === 2 && <Chip status='black'></Chip>}
+                                {/* -1：置くことができる */}
+                                {/* {col === -1 && (
+                                    <div
+                                        className="bg-black w-5 h-5 rounded-md"
+                                    ></div>
+                                )} */}
                             </div>
                         );
                     });

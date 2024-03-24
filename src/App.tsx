@@ -8,7 +8,7 @@ function App() {
     <div className="App container m-auto min-h-screen flex">
       <div className="w-full m-auto">
         <h1 className="font-bold text-2xl text-[#696969] py-4 mb-2">
-          オセロ対戦
+          オセロ
         </h1>
         <Board></Board>
       </div>
