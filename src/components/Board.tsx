@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { Card } from "@mui/material";
 import Chip from './Chip';
+import Turn from './Turn';
 
 function Board() {
     // 初期状態
@@ -103,43 +104,51 @@ function Board() {
     };
 
     return (
-        // オセロの盤
-        <Card square className="max-w-md">
-            {board.map((row, rowIndex) => {
-                // cols:横軸
-                const cols = row.map((col, colIndex) => {
+        <>
+            {/* オセロの盤 */}
+            <Card square className="max-w-md" style={{margin: '0 auto'}}>
+                {board.map((row, rowIndex) => {
+                    // cols:横軸
+                    const cols = row.map((col, colIndex) => {
+                        return (
+                            // コマ
+                            <div
+                                key={colIndex}
+                                className="border border-[#000] bg-[#516a39] aspect-[4/4] p-1"
+                            >
+                                {/* ０：何も置かれていない */}
+                                {col === 0 && (
+                                    <div
+                                        className="w-full h-full"
+                                        onClick={() => clickBoard(rowIndex, colIndex)}
+                                    ></div>
+                                )}
+                                {/* １：白が置かれている */}
+                                {col === 1 && <Chip status='white'></Chip>}
+                                {/* ２：黒が置かれている */}
+                                {col === 2 && <Chip status='black'></Chip>}
+                            </div>
+                        );
+                    });
+
                     return (
-                        // コマ
+                        // row:縦軸
                         <div
-                            key={colIndex}
-                            className="border border-[#000] bg-[#516a39] aspect-[4/4] p-1"
+                            className="grid justify-items-stretch grid-cols-8 w-full"
+                            key={rowIndex}
                         >
-                            {/* ０：何も置かれていない */}
-                            {col === 0 && (
-                                <div
-                                    className="w-full h-full"
-                                    onClick={() => clickBoard(rowIndex, colIndex)}
-                                ></div>
-                            )}
-                            {/* １：白が置かれている */}
-                            {col === 1 && <Chip status='white'></Chip>}
-                            {/* ２：黒が置かれている */}
-                            {col === 2 && <Chip status='black'></Chip>}
+                            {cols}
                         </div>
                     );
-                });
-
-                return (
-                    // row:縦軸
-                    <div
-                        className="grid justify-items-stretch grid-cols-8 w-full"
-                        key={rowIndex}
-                    >
-                        {cols}
-                    </div>
-                );
-            })}
-        </Card>
+                })}
+            </Card>
+            
+            {/* 現状のターン */}
+            <div className="font-bold text-2xl text-[#696969] py-4 mb-2">
+                <Turn color={turn} />
+            </div>
+        </>
+        
     );
 }
 
