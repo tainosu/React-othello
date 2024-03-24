@@ -4,8 +4,8 @@ function Turn(props: any){
     const blackNum = props.black;
     return (
         <div className="flex justify-center">
-            <div className="mr-4">白:{whiteNum}個</div>
-            <div className="mr-4">{color}のターン</div>
+            <div className="mr-12">白:{whiteNum}個</div>
+            <div className="mr-12">{color}のターン</div>
             黒:{blackNum}個
         </div>
     )

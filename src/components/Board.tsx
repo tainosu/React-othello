@@ -1,8 +1,10 @@
 import { useState } from "react";
 
 import { Card } from "@mui/material";
+import { Button } from "@mui/material";
+
 import Chip from './Chip';
-import Turn from './Turn';
+import Status from './Status';
 
 function Board() {
     // 初期状態
@@ -128,6 +130,12 @@ function Board() {
         setTurn(turn === 'white' ? 'black' : 'white');
     };
 
+    // パス機能
+    function pass() {
+        const next = turn === 'white' ? 'black' : 'white';
+        setTurn(next);
+    }
+
     return (
         <>
             {/* オセロの盤 */}
@@ -168,10 +176,18 @@ function Board() {
                 })}
             </Card>
 
-            {/* 現状のターン */}
+            {/* 現状確認 */}
             <div className="font-bold text-2xl text-[#696969] py-4 mb-2">
-                <Turn color={turn} white={whiteNum} black={blackNum}/>
+                <Status color={turn} white={whiteNum} black={blackNum}/>
             </div>
+            
+            {/* パスボタン */}
+            <div>
+                <Button variant="contained" onClick={pass}>
+                    パス
+                </Button>
+            </div>
+
         </>
         
     );
