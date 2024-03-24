@@ -33,6 +33,8 @@ function Board() {
     const [board, setBoard] = useState(defaultBoard);
     // ターンの管理
     const [turn, setTurn] = useState(preceding);
+    const [whiteNum, setWhiteNum] = useState(2);
+    const [blackNum, setBlackNum] = useState(2);
 
     // ひっくり返すことができる座標を取得
     const getReversePoints = (currentX: number, currentY: number) => {
@@ -84,6 +86,25 @@ function Board() {
         return result;
     };
 
+    // 盤のコマの数を数える
+    function countChips(matrix: number[][]): [number, number]{
+        let chipsNum: [number, number];
+        let white = 0;
+        let black = 0;
+        
+        for(let i = 0; i < matrix.length; i++){
+            for(let j = 0; j < matrix[i].length; j++){
+                if(matrix[i][j] === 1){
+                    white++;
+                }else if(matrix[i][j] === 2){
+                    black++;
+                }
+            }
+        }
+        chipsNum = [white, black];
+        return chipsNum;
+    }
+
     // 盤クリック時のイベント
     const clickBoard = (rowIndex: number, colIndex: number) => {
         const newBoard = [...board];
@@ -99,6 +120,10 @@ function Board() {
         });
         // 盤の状態を更新
         setBoard(newBoard);
+        const chipsNum: [number, number] = countChips(board);
+        setWhiteNum(chipsNum[0]);
+        setBlackNum(chipsNum[1]);
+
         // ターンを更新
         setTurn(turn === 'white' ? 'black' : 'white');
     };
@@ -142,10 +167,10 @@ function Board() {
                     );
                 })}
             </Card>
-            
+
             {/* 現状のターン */}
             <div className="font-bold text-2xl text-[#696969] py-4 mb-2">
-                <Turn color={turn} />
+                <Turn color={turn} white={whiteNum} black={blackNum}/>
             </div>
         </>
         
