@@ -39,14 +39,14 @@ function Board() {
     const [whiteNum, setWhiteNum] = useState(2);
     const [blackNum, setBlackNum] = useState(2);
 
-
+    // 終了判定
     useEffect(() => {
         if(checkGameover()) {
             endGame();
         }
     }, [board]);
 
-    // 終了判定
+    // 終了判定関数
     const checkGameover = () => {
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
