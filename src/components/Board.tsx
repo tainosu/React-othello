@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+// import useSound from 'use-sound';
 
 import { Card } from "@mui/material";
 import { Button } from "@mui/material";
@@ -38,6 +39,12 @@ function Board() {
     // 各コマの管理
     const [whiteNum, setWhiteNum] = useState(2);
     const [blackNum, setBlackNum] = useState(2);
+
+    // const [play] = useSound('../../sounds/kacha.mp3');
+    // const playSound = () => {
+    //     console.log('play sound');
+    //     play(); // useSoundフックから提供されたplay関数を呼び出す
+    // };
 
     // 終了判定
     useEffect(() => {
@@ -164,6 +171,7 @@ function Board() {
         const reversePoints = getReversePoints(colIndex, rowIndex);
         // 置けないマスをクリックしたら抜ける
         if (reversePoints.length === 0) return 0;
+        // playSound();
         newBoard[rowIndex][colIndex] = turn === 'white' ? 1 : 2;
         // コマをひっくり返す
         reversePoints.forEach((item) => {
