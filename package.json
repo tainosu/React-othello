@@ -20,7 +20,7 @@
     "use-sound": "^4.0.1",
     "web-vitals": "^2.1.4"
   },
-  "homepage": "https://tainosu.github.io/react-othello/",
+  "homepage": "https://tainosu.github.io/React-othello/",
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
