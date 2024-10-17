@@ -1,2 +1,5 @@
 # React-othello
-オセロできます
+## 実行コマンド
+```bash
+npm run start
+```
